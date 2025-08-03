@@ -1,0 +1,22 @@
+After cloning the repository run
+> npm install
+
+Assuming that you have docker set up, run
+> docker-compose -f docker-compose.yml up -d
+
+Installing prisma
+npm install -D prisma
+npm instal @prisma/client
+
+To connect prisma to the database, open a new terminal and run
+> npx prisma studio
+This connects the database to the url in the .env file
+Also opens a page in the browser
+
+> npm run start:dev
+This starts the development server and watches out for changes
+
+To create a module in nest,we run
+> nest g module module_name
+
+
