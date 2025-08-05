@@ -7,8 +7,8 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
-      POSTGRES_DB: nest
+      POSTGRES_DB: impact360
     networks:
-      - freecodecamp
+      - impact360
 networks:
-  freecodecamp:
+  impact360:

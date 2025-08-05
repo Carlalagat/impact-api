@@ -7,6 +7,8 @@ import { BookmarkModule } from './bookmark/bookmark.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { TestModule } from './test/test.module';
 import { AppController } from './app.controller';
+import { AdminModule } from './admin/admin.module';
+import { PartnerModule } from './partner/partner.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { AppController } from './app.controller';
     BookmarkModule,
     PrismaModule,
     TestModule,
+    AdminModule,
+    PartnerModule,
   ],
   controllers: [AppController],
 })

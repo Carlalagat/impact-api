@@ -10,33 +10,154 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//Declaring models
-model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  email     String  @unique
-  hash      String
-  firstName String?
-  lastName  String?
-
-  bookmarks Bookmark[]
-
-  // @@map("users")
+model AdminUser {
+  id        String    @id
+  name      String
+  email     String    @unique
+  role      AdminRole
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
-model Bookmark {
-  id        Int      @id @default(autoincrement())
+enum AdminRole {
+  SUPERADMIN
+  STAFF
+}
+
+model Partner {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  contactEmail String?  @unique
+  contactPhone String?
+  logoUrl      String?
+  website      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  events Event[]
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  name        String
+  type        String
+  description String?
+  location    String
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products  Product[]
+  tickets   Ticket[]
+  Partner   Partner?  @relation(fields: [partnerId], references: [id])
+  partnerId String?
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  type          String
+  price         Float
+  stockQuantity Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  eventId String?
+  event   Event?  @relation(fields: [eventId], references: [id])
+
+  images     Image[]
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+}
+
+model Image {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  type      String
+  fileUrl   String
+  alt       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  id        String   @id @default(uuid())
+  sessionId String
+  status    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  title       String
-  description String?
-  link        String
+  items  CartItem[]
+  orders Order[]
+}
 
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+model CartItem {
+  id          String   @id @default(uuid())
+  cartId      String
+  productId   String
+  quantity    Int
+  priceAtTime Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  // @@map("bookmarks")
+  cart    Cart    @relation(fields: [cartId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  cartId        String
+  fullName      String
+  email         String
+  phoneNumber   String
+  totalAmount   Float
+  paymentMethod String
+  status        OrderStatus
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  cart    Cart        @relation(fields: [cartId], references: [id])
+  items   OrderItem[]
+  tickets Ticket[]
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  productId   String
+  quantity    Int
+  priceAtTime Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+  COMPLETED
+}
+
+model Ticket {
+  id         String       @id @default(uuid())
+  ticketCode String       @unique
+  orderId    String
+  eventId    String
+  status     TicketStatus @default(VALID)
+  issuedAt   DateTime     @default(now())
+  usedAt     DateTime?
+
+  order Order @relation(fields: [orderId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+}
+
+enum TicketStatus {
+  VALID
+  USED
+  CANCELLED
 }
