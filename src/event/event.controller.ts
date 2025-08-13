@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { EventService } from './event.service';
@@ -21,8 +22,8 @@ export class EventController {
 
   // PUBLIC
   @Get()
-  findAll() {
-    return this.eventService.findAll();
+  findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+    return this.eventService.findAll(Number(page) || 1, Number(limit) || 10);
   }
 
   // PUBLIC

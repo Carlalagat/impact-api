@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { PartnerService } from './partner.service';
@@ -21,8 +22,8 @@ export class PartnerController {
 
   // PUBLIC
   @Get()
-  findAll() {
-    return this.partnerService.findAll();
+  findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+    return this.partnerService.findAll(Number(page) || 1, Number(limit) || 10);
   }
 
   // PUBLIC

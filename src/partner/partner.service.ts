@@ -10,9 +10,12 @@ export class PartnerService {
     return this.prisma.partner.create({ data });
   }
 
-  findAll() {
+  findAll(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
     return this.prisma.partner.findMany({
-      include: { events: true }, // Include related events
+      skip,
+      take: limit,
+      include: { events: true },
     });
   }
 
@@ -31,8 +34,15 @@ export class PartnerService {
   }
 
   async remove(id: string) {
-    const partner = await this.prisma.partner.findUnique({ where: { id } });
+    const partner = await this.prisma.partner.findUnique({
+      where: { id },
+      include: { events: true },
+    });
     if (!partner) throw new NotFoundException('Partner not found');
+
+    if (partner.events.length > 0) {
+      throw new Error('Cannot delete partner with active events');
+    }
 
     return this.prisma.partner.delete({ where: { id } });
   }

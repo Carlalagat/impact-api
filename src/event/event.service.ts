@@ -15,8 +15,11 @@ export class EventService {
     });
   }
 
-  findAll() {
+  findAll(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
     return this.prisma.event.findMany({
+      skip,
+      take: limit,
       include: {
         Partner: true,
         products: true,
@@ -51,8 +54,15 @@ export class EventService {
   }
 
   async remove(id: string) {
-    const event = await this.prisma.event.findUnique({ where: { id } });
+    const event = await this.prisma.event.findUnique({
+      where: { id },
+      include: { products: true, tickets: true },
+    });
     if (!event) throw new NotFoundException('Event not found');
+
+    if (event.products.length > 0 || event.tickets.length > 0) {
+      throw new Error('Cannot delete event with linked products or tickets');
+    }
 
     return this.prisma.event.delete({ where: { id } });
   }
