@@ -19,6 +19,10 @@ export class CreatePartnerDto {
   @IsUrl()
   @IsOptional()
   logoUrl?: string;
+
+  @IsOptional()
+  @IsUrl()
+  website?: string;
 }
 
 export class UpdatePartnerDto extends PartialType(CreatePartnerDto) {}

@@ -1,5 +1,4 @@
-// src/admin-users/admin-users.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAdminUserDto, UpdateAdminUserDto } from '../dto';
 
@@ -7,55 +6,23 @@ import { CreateAdminUserDto, UpdateAdminUserDto } from '../dto';
 export class AdminService {
   constructor(private prisma: PrismaService) {}
 
-  create(createAdminUserDto: CreateAdminUserDto) {
-    return this.prisma.adminUser.create({
-      data: createAdminUserDto,
-    });
+  create(data: CreateAdminUserDto) {
+    return this.prisma.adminUser.create({ data });
   }
 
   findAll() {
-    return this.prisma.adminUser.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    return this.prisma.adminUser.findMany();
   }
 
-  async findOne(id: string) {
-    const admin = await this.prisma.adminUser.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      },
-    });
-    if (!admin) {
-      throw new NotFoundException(`Admin with ID "${id}" not found.`);
-    }
-    return admin;
+  findOne(id: string) {
+    return this.prisma.adminUser.findUnique({ where: { id } });
   }
 
-  update(id: string, updateAdminUserDto: UpdateAdminUserDto) {
-    return this.prisma.adminUser.update({
-      where: { id },
-      data: updateAdminUserDto,
-    });
+  update(id: string, data: UpdateAdminUserDto) {
+    return this.prisma.adminUser.update({ where: { id }, data });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
-    return this.prisma.adminUser.delete({
-      where: { id },
-    });
+  remove(id: string) {
+    return this.prisma.adminUser.delete({ where: { id } });
   }
 }

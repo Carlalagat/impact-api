@@ -1,59 +1,46 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { AdminService } from './admin.service';
 import { CreateAdminUserDto, UpdateAdminUserDto } from '../dto';
-import { Roles } from '../auth/decorator';
-import { RolesGuard } from '../auth/guard';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { RolesGuard } from '../auth/guard/roles.guard';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { AdminRole } from '@prisma/client';
 
-// Protect the entire controller - user must be logged in.
-@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller('admin')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class AdminController {
-  constructor(private readonly adminUsersService: AdminService) {}
+  constructor(private readonly adminUserService: AdminService) {}
 
-  // Only a SUPERADMIN can create new admins.
   @Post()
   @Roles(AdminRole.SUPERADMIN)
-  create(@Body() createAdminUserDto: CreateAdminUserDto) {
-    return this.adminUsersService.create(createAdminUserDto);
+  create(@Body() dto: CreateAdminUserDto) {
+    return this.adminUserService.create(dto);
   }
 
-  // Any logged-in admin (STAFF or SUPERADMIN) can see the list.
   @Get()
+  @Roles(AdminRole.SUPERADMIN, AdminRole.STAFF)
   findAll() {
-    return this.adminUsersService.findAll();
+    return this.adminUserService.findAll();
   }
 
-  // Any logged-in admin can view a single profile.
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.adminUsersService.findOne(id);
-  }
-
-  // Only a SUPERADMIN can change another admin's details (e.g., promote to SUPERADMIN).
   @Patch(':id')
   @Roles(AdminRole.SUPERADMIN)
-  update(
-    @Param('id') id: string,
-    @Body() updateAdminUserDto: UpdateAdminUserDto,
-  ) {
-    return this.adminUsersService.update(id, updateAdminUserDto);
+  update(@Param('id') id: string, @Body() dto: UpdateAdminUserDto) {
+    return this.adminUserService.update(id, dto);
   }
 
-  // Only a SUPERADMIN can delete another admin.
   @Delete(':id')
   @Roles(AdminRole.SUPERADMIN)
   remove(@Param('id') id: string) {
-    return this.adminUsersService.remove(id);
+    return this.adminUserService.remove(id);
   }
 }

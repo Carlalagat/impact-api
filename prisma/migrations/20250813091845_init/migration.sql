@@ -20,6 +20,19 @@ CREATE TABLE "public"."AdminUser" (
 );
 
 -- CreateTable
+CREATE TABLE "public"."Partner" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "contactEmail" TEXT,
+    "logoUrl" TEXT,
+    "website" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Partner_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "public"."Event" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -29,6 +42,7 @@ CREATE TABLE "public"."Event" (
     "date" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "partnerId" TEXT,
 
     CONSTRAINT "Event_pkey" PRIMARY KEY ("id")
 );
@@ -118,6 +132,7 @@ CREATE TABLE "public"."OrderItem" (
 CREATE TABLE "public"."Ticket" (
     "id" TEXT NOT NULL,
     "ticketCode" TEXT NOT NULL,
+    "qrCodeUrl" TEXT,
     "orderId" TEXT NOT NULL,
     "eventId" TEXT NOT NULL,
     "status" "public"."TicketStatus" NOT NULL DEFAULT 'VALID',
@@ -131,7 +146,16 @@ CREATE TABLE "public"."Ticket" (
 CREATE UNIQUE INDEX "AdminUser_email_key" ON "public"."AdminUser"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Partner_name_key" ON "public"."Partner"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Partner_contactEmail_key" ON "public"."Partner"("contactEmail");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Ticket_ticketCode_key" ON "public"."Ticket"("ticketCode");
+
+-- AddForeignKey
+ALTER TABLE "public"."Event" ADD CONSTRAINT "Event_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "public"."Partner"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Product" ADD CONSTRAINT "Product_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "public"."Event"("id") ON DELETE SET NULL ON UPDATE CASCADE;

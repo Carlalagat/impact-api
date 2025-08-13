@@ -6,48 +6,34 @@ import { CreatePartnerDto, UpdatePartnerDto } from '../dto';
 export class PartnerService {
   constructor(private prisma: PrismaService) {}
 
-  create(createPartnerDto: CreatePartnerDto) {
-    return this.prisma.partner.create({
-      data: createPartnerDto,
-    });
+  create(data: CreatePartnerDto) {
+    return this.prisma.partner.create({ data });
   }
 
   findAll() {
     return this.prisma.partner.findMany({
-      orderBy: {
-        name: 'asc',
-      },
+      include: { events: true }, // Include related events
     });
   }
 
-  async findOne(id: string) {
-    const partner = await this.prisma.partner.findUnique({
+  findOne(id: string) {
+    return this.prisma.partner.findUnique({
       where: { id },
+      include: { events: true },
     });
-
-    if (!partner) {
-      throw new NotFoundException(`Partner with ID "${id}" not found.`);
-    }
-    return partner;
   }
 
-  async update(id: string, updatePartnerDto: UpdatePartnerDto) {
-    // First, verify the partner exists
-    await this.findOne(id);
-    return this.prisma.partner.update({
-      where: { id },
-      data: updatePartnerDto,
-    });
+  async update(id: string, data: UpdatePartnerDto) {
+    const partner = await this.prisma.partner.findUnique({ where: { id } });
+    if (!partner) throw new NotFoundException('Partner not found');
+
+    return this.prisma.partner.update({ where: { id }, data });
   }
 
   async remove(id: string) {
-    // First, verify the partner exists
-    await this.findOne(id);
-    // Note: If you have events linked to this partner, you need to decide
-    // what happens to them. Our schema has `onDelete: SetNull`, so Prisma
-    // will automatically set the `partnerId` on related events to null.
-    return this.prisma.partner.delete({
-      where: { id },
-    });
+    const partner = await this.prisma.partner.findUnique({ where: { id } });
+    if (!partner) throw new NotFoundException('Partner not found');
+
+    return this.prisma.partner.delete({ where: { id } });
   }
 }

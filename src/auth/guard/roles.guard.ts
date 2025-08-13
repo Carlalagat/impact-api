@@ -1,7 +1,7 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ROLES_KEY } from '../decorator/roles.decorator';
 import { AdminRole } from '@prisma/client';
-import { ROLES_KEY } from '../decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -15,7 +15,8 @@ export class RolesGuard implements CanActivate {
     if (!requiredRoles) {
       return true;
     }
+
     const { user } = context.switchToHttp().getRequest();
-    return requiredRoles.some((role) => user.role?.includes(role));
+    return requiredRoles.includes(user.role);
   }
 }

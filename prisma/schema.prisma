@@ -28,7 +28,6 @@ model Partner {
   id           String   @id @default(uuid())
   name         String   @unique
   contactEmail String?  @unique
-  contactPhone String?
   logoUrl      String?
   website      String?
   createdAt    DateTime @default(now())
@@ -49,7 +48,7 @@ model Event {
 
   products  Product[]
   tickets   Ticket[]
-  Partner   Partner?  @relation(fields: [partnerId], references: [id])
+  Partner   Partner?  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
   partnerId String?
 }
 
