@@ -1,21 +1,13 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthDto } from './dto';
+import { Body, Controller, Post } from '@nestjs/common';
+import { AdminAuthService } from './auth.service';
+import { AdminLoginDto } from './dto';
 
-@Controller('auth')
-export class AuthController {
-  constructor(private authService: AuthService) {}
+@Controller('admin/auth')
+export class AdminAuthController {
+  // constructor(private authService: AdminAuthService) {}
 
-  // /**Signup */
-  // @Post('signup')
-  // signup(@Body() dto: AuthDto) {
-  //   return this.authService.signup(dto);
-  // }
-
-  // /**Login */
-  // @HttpCode(HttpStatus.OK) //CUSTOM STATUS CODE
-  // @Post('signin')
-  // signin(@Body() dto: AuthDto) {
-  //   return this.authService.login(dto);
+  // @Post('login')
+  // async login(@Body() dto: AdminLoginDto) {
+  //   return this.authService.login(dto.email, dto.password);
   // }
 }

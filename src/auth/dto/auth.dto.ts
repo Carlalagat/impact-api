@@ -1,8 +1,8 @@
+// dto/admin-auth.dto.ts
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
-export class AuthDto {
+export class AdminLoginDto {
   @IsEmail()
-  @IsNotEmpty()
   email: string;
 
   @IsString()

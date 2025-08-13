@@ -10,6 +10,7 @@ CREATE TYPE "public"."TicketStatus" AS ENUM ('VALID', 'USED', 'CANCELLED');
 -- CreateTable
 CREATE TABLE "public"."AdminUser" (
     "id" TEXT NOT NULL,
+    "supabaseId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "role" "public"."AdminRole" NOT NULL,
@@ -132,7 +133,6 @@ CREATE TABLE "public"."OrderItem" (
 CREATE TABLE "public"."Ticket" (
     "id" TEXT NOT NULL,
     "ticketCode" TEXT NOT NULL,
-    "qrCodeUrl" TEXT,
     "orderId" TEXT NOT NULL,
     "eventId" TEXT NOT NULL,
     "status" "public"."TicketStatus" NOT NULL DEFAULT 'VALID',
@@ -141,6 +141,9 @@ CREATE TABLE "public"."Ticket" (
 
     CONSTRAINT "Ticket_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AdminUser_supabaseId_key" ON "public"."AdminUser"("supabaseId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "AdminUser_email_key" ON "public"."AdminUser"("email");

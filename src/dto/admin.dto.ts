@@ -1,12 +1,14 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { AdminRole } from '@prisma/client';
 import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateAdminUserDto {
-  @IsUUID()
-  @IsNotEmpty()
-  id: string;
-
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -14,8 +16,13 @@ export class CreateAdminUserDto {
   @IsEmail()
   email: string;
 
+  @IsString()
+  @IsNotEmpty()
+  supabaseId: string;
+
+  @IsOptional()
   @IsEnum(AdminRole)
-  role: AdminRole;
+  role?: AdminRole;
 }
 
 export class UpdateAdminUserDto extends PartialType(CreateAdminUserDto) {}

@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateAdminUserDto, UpdateAdminUserDto } from '../dto';
@@ -16,31 +17,42 @@ import { Roles } from '../auth/decorator/roles.decorator';
 import { AdminRole } from '@prisma/client';
 
 @Controller('admin')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 export class AdminController {
-  constructor(private readonly adminUserService: AdminService) {}
+  constructor(private readonly adminService: AdminService) {}
 
+  // Superadmin creates a new admin user
   @Post()
+  @UseGuards(RolesGuard)
   @Roles(AdminRole.SUPERADMIN)
-  create(@Body() dto: CreateAdminUserDto) {
-    return this.adminUserService.create(dto);
+  create(@Body() dto: CreateAdminUserDto, @Request() req) {
+    return this.adminService.create(dto, req.user.role);
   }
 
+  // Superadmin or Staff can view all admins
   @Get()
   @Roles(AdminRole.SUPERADMIN, AdminRole.STAFF)
   findAll() {
-    return this.adminUserService.findAll();
+    return this.adminService.findAll();
   }
 
+  // Superadmin updates an admin
   @Patch(':id')
+  @UseGuards(RolesGuard)
   @Roles(AdminRole.SUPERADMIN)
   update(@Param('id') id: string, @Body() dto: UpdateAdminUserDto) {
-    return this.adminUserService.update(id, dto);
+    return this.adminService.update(id, dto);
   }
 
+  // Superadmin deletes an admin
   @Delete(':id')
   @Roles(AdminRole.SUPERADMIN)
   remove(@Param('id') id: string) {
-    return this.adminUserService.remove(id);
+    return this.adminService.remove(id);
+  }
+
+  @Get('me')
+  getMe(@Request() req) {
+    return req.user;
   }
 }
