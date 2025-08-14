@@ -16,8 +16,18 @@ model AdminUser {
   name       String
   email      String    @unique
   role       AdminRole
+  deletedAt DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+}
+
+model DeletedAdminUser {
+  id         String    @id @default(cuid())
+  supabaseId String
+  name       String
+  email      String    @unique
+  role       AdminRole
+  deletedAt  DateTime  @default(now())
 }
 
 enum AdminRole {

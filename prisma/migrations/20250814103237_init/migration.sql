@@ -21,6 +21,18 @@ CREATE TABLE "public"."AdminUser" (
 );
 
 -- CreateTable
+CREATE TABLE "public"."DeletedAdminUser" (
+    "id" TEXT NOT NULL,
+    "supabaseId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "role" "public"."AdminRole" NOT NULL,
+    "deletedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "DeletedAdminUser_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "public"."Partner" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -147,6 +159,9 @@ CREATE UNIQUE INDEX "AdminUser_supabaseId_key" ON "public"."AdminUser"("supabase
 
 -- CreateIndex
 CREATE UNIQUE INDEX "AdminUser_email_key" ON "public"."AdminUser"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "DeletedAdminUser_email_key" ON "public"."DeletedAdminUser"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Partner_name_key" ON "public"."Partner"("name");

@@ -18,7 +18,7 @@ export class CreateAdminUserDto {
 
   @IsString()
   @IsNotEmpty()
-  supabaseId: string;
+  password: string;
 
   @IsOptional()
   @IsEnum(AdminRole)

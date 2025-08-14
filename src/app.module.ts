@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guard';
 import { RolesGuard } from './auth/guard/roles.guard';
 import { PrismaService } from './prisma/prisma.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 // Importing modules
 import { AuthModule } from './auth/auth.module';
@@ -28,6 +29,7 @@ import { TicketsModule } from './tickets/tickets.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     AppMailerModule,
     AuthModule,
     UserModule,
