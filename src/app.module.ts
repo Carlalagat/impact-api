@@ -23,6 +23,7 @@ import { ImageModule } from './image/image.module';
 import { CartModule } from './cart/cart.module';
 import { OrdersModule } from './orders/orders.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { TicketsModule } from './tickets/tickets.module';
     CartModule,
     OrdersModule,
     TicketsModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [
